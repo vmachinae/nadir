@@ -16,7 +16,7 @@
 ///   File: main_opt.hpp
 ///
 /// Author: $author$
-///   Date: 4/25/2020
+///   Date: 4/25/2020, 9/20/2021
 ///////////////////////////////////////////////////////////////////////
 #ifndef VOS_APP_CONSOLE_VERSION_MAIN_OPT_HPP
 #define VOS_APP_CONSOLE_VERSION_MAIN_OPT_HPP
@@ -94,6 +94,7 @@ public:
     typedef typename extends::writer_t writer_t;
     typedef typename extends::file_t file_t;
     typedef typename extends::string_t string_t;
+    typedef typename extends::string_reader_t string_reader_t;
     typedef typename extends::char_reader_t char_reader_t;
     typedef typename extends::char_t char_t;
     typedef typename extends::end_char_t end_char_t;
