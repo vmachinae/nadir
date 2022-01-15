@@ -277,15 +277,14 @@ public:
 }; /// class creatort
 typedef creatort<> creator;
 
-typedef creator creator_extend_implements;
-typedef base creator_extend_extends;
 /// class creator_extendt
 template
-<class TImplements = creator_extend_implements, class TExtends = creator_extend_extends>
+<class TImplements = creator, class TExtends = base>
 class exported creator_extendt: virtual public TImplements, public TExtends {
 public:
-    typedef TImplements Implements;
-    typedef TExtends Extends;
+    typedef TImplements implements, Implements;
+    typedef TExtends extends, Extends;
+    typedef creator_extendt derives, Derives;
 
     /// constructor / destructor
     creator_extendt(bool is_created = false): is_created_(is_created) {
@@ -309,6 +308,116 @@ protected:
     bool is_created_;
 }; /// class creator_extendt
 typedef creator_extendt<> creator_extend;
+
+/// class createdt
+template 
+<typename TAttached = pointer_t, typename TUnattached = int, TUnattached VUnattached = 0,
+ class TImplements = attachert<TAttached, TUnattached, VUnattached, creator>, 
+ class TExtends = attachedt<TAttached, TUnattached, VUnattached, TImplements, base> >
+class exported createdt: virtual public TImplements, public TExtends {
+public:
+    typedef TImplements implements, Implements;
+    typedef TExtends extends, Extends;
+    typedef createdt derives, Derives;
+
+    typedef TAttached attached_t;
+    typedef TUnattached unattached_t;
+    enum { unattached = VUnattached };
+
+    /// constructor / destructor
+    createdt(attached_t detached, bool is_created): extends(detached), is_created_(is_created) {
+    }
+    createdt(attached_t detached): extends(detached), is_created_(false) {
+    }
+    createdt(const createdt& copy): extends(copy), is_created_(copy.is_created_) {
+    }
+    createdt(): is_created_(false) {
+    }
+    virtual ~createdt() {
+        if (!(this->destroyed())) {
+            throw (create_exception(destroy_failed));
+        }
+    }
+
+    /// create... / destroy...
+    virtual bool create() {
+        attached_t detached = (attached_t)(unattached);
+        if (((attached_t)(unattached) != (detached = this->create_attached()))) {
+            this->set_is_created();
+            return true;
+        }
+        return false;
+    }
+    virtual bool destroy() {
+        attached_t detached = (attached_t)(unattached);
+        this->set_is_created(false);
+        if (((attached_t)(unattached) != (detached = this->detach()))) {
+            if ((this->destroy_detached(detached))) {
+                return true;
+            }
+        } else {
+            return true;
+        }
+        return false;
+    }
+    virtual attached_t create_attached() {
+        attached_t detached = (attached_t)(unattached);
+        if ((this->destroyed())) {
+            if (((attached_t)(unattached) != (detached = create_detached()))) {
+                this->attach(detached);
+            }
+        }
+        return detached;
+    }
+    virtual attached_t create_detached() const {
+        attached_t detached = (attached_t)(unattached);
+        return detached;
+    }
+    virtual bool destroy_detached(attached_t detached) const {
+        if ((attached_t)(unattached) != (detached)) {
+            return true;
+        }
+        return false;
+    }
+
+    /// ...is_created / ...is_destroyed
+    virtual bool set_is_created(bool to = true) {
+        is_created_ = to;
+        return is_created_;
+    }
+    virtual bool is_created() const {
+        return is_created_;
+    }
+    virtual bool set_is_destroyed(bool to = true) {
+        is_created_ = !to;
+        return !is_created_;
+    }
+    virtual bool is_destroyed() const {
+        return !is_created_;
+    }
+
+    /// attach... / detach...
+    virtual attached_t attach_created(attached_t detached, bool is_created = true) {
+        attached_t attached = this->attach(detached);
+        this->set_is_created(is_created);
+        return attached;
+    }
+    virtual attached_t detach_created(bool& is_created) {
+        attached_t detached = extends::detach();
+        is_created = this->is_created();
+        this->set_is_created(false);
+        return detached;
+    }
+    virtual attached_t detach() {
+        attached_t detached = extends::detach();
+        this->set_is_created(false);
+        return detached;
+    }
+
+protected:
+    bool is_created_;
+}; /// class createdt
+typedef createdt<> created;
 
 } /// namespace base
 } /// namespace xos

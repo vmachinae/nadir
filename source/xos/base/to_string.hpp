@@ -249,9 +249,21 @@ public:
     char_to_stringt(const char_to_stringt& copy): extends(copy) {
     }
     char_to_stringt(const char_t& chars) {
-        const char_t apos = ((char_t)'\'');
+        const char_t apos = ((char_t)'\''), esc = ((char_t)'\\'),
+                     cr = ((char_t)'r'), lf = ((char_t)'n');
         this->append(&apos, 1);
-        this->append(&chars, 1);
+        switch ((char)chars) {
+        case '\n':
+            this->append(&esc, 1);
+            this->append(&lf, 1);
+            break;
+        case '\r':
+            this->append(&esc, 1);
+            this->append(&cr, 1);
+            break;
+        default:
+            this->append(&chars, 1);
+        }
         this->append(&apos, 1);
     }
     virtual ~char_to_stringt() {

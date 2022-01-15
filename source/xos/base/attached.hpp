@@ -167,6 +167,81 @@ protected:
 }; /// class attachedt
 typedef attachedt<> attached;
 
+namespace base {
+
+typedef ::xos::attach_exception attach_exception;
+static const attach_exception attach_failed = ::xos::attach_failed;
+static const attach_exception detach_failed = ::xos::detach_failed;
+
+typedef ::xos::attach_status attacher_exception;
+static const attacher_exception failed_to_attach = ::xos::attach_failed;
+static const attacher_exception failed_to_detach = ::xos::detach_failed;
+
+/// class attachert
+template 
+<typename TAttached = pointer_t, typename TUnattached = int, TUnattached VUnattached = 0,
+ class TImplement = implement_base, class TImplements = ::xos::attachert
+ <TAttached, TUnattached, VUnattached, TImplement> >
+class exported attachert: virtual public TImplements {
+public:
+    typedef TImplements implements, Implements;
+    typedef attachert derives, Derives;
+
+    typedef TAttached attached_t;
+    typedef TUnattached unattached_t;
+    enum { unattached = VUnattached };
+
+}; /// class attachert
+typedef attachert<> attacher;
+
+/// class attachedt
+template 
+<typename TAttached = pointer_t, typename TUnattached = int, TUnattached VUnattached = 0,
+ class TImplements = attachert<TAttached, TUnattached, VUnattached, implement_base>, 
+ class TExtends = base>
+class exported attachedt: virtual public TImplements, public TExtends {
+public:
+    typedef TImplements implements, Implements;
+    typedef TExtends extends, Extends;
+    typedef attachedt derives, Derives;
+
+    typedef TAttached attached_t;
+    typedef TUnattached unattached_t;
+    enum { unattached = VUnattached };
+
+    /// constructor / destructor
+    attachedt(attached_t detached): attached_to_(detached) {
+    }
+    attachedt(const attachedt& copy): attached_to_(copy.attached_to_) {
+    }
+    attachedt(): attached_to_((attached_t)unattached) {
+    }
+    virtual ~attachedt() {
+        if (!(this->detached())) {
+            throw (attach_exception(detach_failed));
+        }
+    }
+
+    /// attach / detach
+    virtual attached_t attach(attached_t detached) {
+        attached_to_ = detached;
+        return attached_to_;
+    }
+    virtual attached_t detach() {
+        attached_t detached = attached_to_;
+        attached_to_ = ((attached_t)unattached);
+        return detached;
+    }
+    virtual attached_t attached_to() const {
+        return attached_to_;
+    }
+
+protected:
+    attached_t attached_to_;
+}; /// class attachedt
+typedef attachedt<> attached;
+
+} /// namespace base
 } /// namespace xos
 
 #endif /// ndef XOS_BASE_ATTACHED_HPP
