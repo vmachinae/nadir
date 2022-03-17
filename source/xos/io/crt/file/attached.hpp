@@ -35,7 +35,7 @@ typedef FILE* attached_t;
 
 /// class attachedt
 template 
-<class TImplement = loggedt<opener>, class TExtend = extended::loggedt<TImplement>,
+<class TImplement = xos::loggedt<opener>, class TExtend = xos::extended::loggedt<TImplement>,
  class TExtends = xos::attachedt<attached_t, int, 0, TImplement, TExtend>,
  class TImplements = typename TExtends::implements>
 class exported attachedt: virtual public TImplements, public TExtends {
